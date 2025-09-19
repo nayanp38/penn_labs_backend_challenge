@@ -15,7 +15,7 @@ class Club(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	code = db.Column(db.String, unique=True, nullable=False)
 	name = db.Column(db.String, nullable=False)
-	description = db.Column(db.Text)
+	description = db.Column(db.String)
 	tags = relationship('Tag', secondary=club_tags, back_populates='clubs')
 
 	def to_dict(self):

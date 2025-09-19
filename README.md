@@ -2,6 +2,22 @@
 
 ## Documentation
 
+Relevant Files:
+1. app.py - runs the Flask API 
+   - Routes:
+      - "/" -> API test (returns welcome string).
+      - "/api" -> API JSON route test (returns welcome JSON).
+      - "/api/clubs" -> responds to GET requests to return a JSON array of clubs.
+
+2. db_create.py - creates SQLAlchemy database in a separate file to prevent circular imports where multiple instances of the database is created.
+
+3. models.py - contains all the database models.
+
+4. bootstrap.py - populates the database with club data and users.
+
+4. clubs.json - legacy club JSON data.
+
+
 Models: 
 1. Club - represents a Penn Club in the database.
    - Attributes: 

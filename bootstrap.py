@@ -5,21 +5,8 @@ from db_create import db
 from models import *
 import json
 from pathlib import Path
+from services import *
 
-
-def create_user(username: str, display_name: str, email: str, admin: bool):
-    exists = User.query.filter_by(username=username).first()
-    if exists:
-        print('User already exists.')
-        return
-
-    new_user = User(username=username, 
-                display_name=display_name, 
-                email=email, 
-                admin=admin)
-    db.session.add(new_user)
-    db.session.commit()
-    print(f'Created user {username}.')
 
 def load_data():
     '''
