@@ -2,7 +2,33 @@
 
 ## Documentation
 
-Fill out this section as you complete the challenge!
+Models: 
+1. Club - represents a Penn Club in the database.
+   - Attributes: 
+      - code -> unique club code/abbreviation.
+      - name -> club name.
+      - description -> club description.
+      - tags -> one-word club tags, in list format.
+   - Methods:
+      - to_dict -> convert a Club object to a JSON dict.
+      - from_dict (static) -> convert a JSON dict to a Club object.
+2. Tag - a particular club tag, connected to a Club model 
+   - Attributes:
+      - name -> tag name.
+      - clubs -> the clubs that contain that tag.
+   - Methods:
+      - get_or_create (static) -> retrieve a tag or create a new one if that tag doesn't exist.
+3. User - a user of Penn Club Review
+   - Attributes:
+      - username -> unique username to distinguish between users.
+      - email -> email for communcation.
+      - display_name -> name displayed on signups/membership lists (likely the user's real name for identification purposes).
+      - admin -> does the user recieve Penn Club Review admin privelages? Useful for bugfixing or QA testing. 
+      - created -> the date/time the account was created. Useful for account verificaiton. 
+   - Methods:
+      - to_dict -> convert a JSON dict to a User object.
+      - from_dict (static) -> convert a User object to a JSON dict.
+
 
 ## Installation
 
