@@ -28,21 +28,21 @@ I could also implement a comment_reaction table to include a reaction to a comme
 To instantiate these comments, creating a root comment would be relatively simple, with all the attributes being inputted to a POST request that could create the comment. To create a reply, the process would be similar, however a parent must be added to reflect the reply to the previous comment. By ensuring the root of the thread is associated to every comment, threads could be easily searched for with an API request. 
 
 In total, we'd want the following routes:
-- [POST] "/api/clubs/<code>/comments" -> create root comment
-- [POST] "/api/comments/<id>/reply" -> reply to a comment
-- [GET] "/api/clubs/<code>/comments" -> list comments of a club
-- [GET] "/api/comments/<thread_id> -> search for a thread
-- [POST] "/api/comments/<id>/react" -> add reaction
-- [DELETE] "/api/comments/<id>" -> delete comment
+- [POST] "/api/clubs/\<code\>/comments" -> create root comment
+- [POST] "/api/comments/\<id\>/reply" -> reply to a comment
+- [GET] "/api/clubs/\<code\>/comments" -> list comments of a club
+- [GET] "/api/comments/\<thread_id\> -> search for a thread
+- [POST] "/api/comments/\<id\>/react" -> add reaction
+- [DELETE] "/api/comments/\<id\>" -> delete comment
 
 ## 3.
 Here are the routes I would cache: 
 - [GET] "/api/clubs" -> used often and computationally expensive, so caching would save a lot of compute. 
 - [GET] "/api/clubs/search" -> computationally expensive. We could cache a search for each letter typed in by the user to make subsequent searches using those prefixes much faster. 
-- [GET] "/api/users/<username>" -> user profiles don't change often, so we can cache for longer. 
+- [GET] "/api/users/\<username\>" -> user profiles don't change often, so we can cache for longer. 
 - comment/thread searches -> similar reason to club search, and comments likely won't change too often. 
 
-I'd cache these routes for aroune 1-2 mins. "/api/users/<username>" can be cached for much longer since user profiles rarely change. I wouldn't cache the [POST], [PATCH], or [DELETE] requests since those need to be immediately updated when a change is made. 
+I'd cache these routes for aroune 1-2 mins. "/api/users/\<username\>" can be cached for much longer since user profiles rarely change. I wouldn't cache the [POST], [PATCH], or [DELETE] requests since those need to be immediately updated when a change is made. 
 
 For caching, I'd use the flask-caching package to easily integrate with our Flask app. 
 

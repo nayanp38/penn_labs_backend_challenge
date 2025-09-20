@@ -21,7 +21,7 @@ Relevant Files:
          - code 
          - username 
       - [PATCH] "/api/clubs/\<code\>" -> updates a club, but only works for admin users. The name, description, and tags of a club can be updated. The id and code of a club can't be updated since they are integral attributes of the club identity. Parameters:
-         - <code> (in http:// request to separate the existing club code with the new club data)
+         - \<code\> (in http:// request to separate the existing club code with the new club data)
          - username
          - name (optional)
          - description (optional)
