@@ -86,6 +86,12 @@ class Tag(db.Model):
 
 	clubs = relationship('Club', secondary=club_tags, back_populates='tags')
 
+	def to_dict(self):
+		return {
+			'name': self.name,
+			'club_count': len(self.clubs) if hasattr(self, 'clubs') else 0,
+		}
+
 	@staticmethod
 	def get_or_create(name):
 		'''

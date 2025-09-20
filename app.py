@@ -158,6 +158,15 @@ def api_club_update(code):
     return jsonify(club.to_dict())
 
 
+@app.route('/api/tags', methods=['GET'])
+def api_tags():
+    '''
+    return a JSON of all tags and the number of clubs associated with each tag
+    '''
+    tags = Tag.query.all()
+    return jsonify([t.to_dict() for t in tags])
+
+
 
 if __name__ == "__main__":
     app.run()
