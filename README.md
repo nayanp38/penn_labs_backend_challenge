@@ -11,6 +11,11 @@ Relevant Files:
 
 2. db_create.py - creates SQLAlchemy database in a separate file to prevent circular imports where multiple instances of the database is created.
 
+3. services.py - contains services for other files to import (for organizational purposes).
+   - Functions:
+      - create_user -> creates a User object based on inputted attributes. 
+      - create_club -> creates a Club attribute based on inputted attributes. 
+
 3. models.py - contains all the database models.
 
 4. bootstrap.py - populates the database with club data and users.

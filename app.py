@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_FILE}"
 db.init_app(app)
 
-# import models after db to avoid circular imports
 from models import *
 
 @app.route("/")
@@ -74,6 +73,9 @@ def api_club_create():
     description = request.args.get('description')
     tags = request.args.getlist('tag')
 
+    if (not code) or (not name): 
+        return jsonify({'error': 'code and name fields required'}), 400
+
     data = {
         'code': code.strip().lower(),
         'name': name.strip(),
@@ -83,9 +85,78 @@ def api_club_create():
 
     create_club(data)
 
-    # create_club(code, name, description, tags)
-
     return jsonify({'Created club': f'{data['code']}'})
+
+
+
+@app.route("/api/clubs/favorite", methods=["POST"])
+def api_club_favorite():
+    '''
+    favorites a club
+    '''
+    code = request.args.get('code')
+    username = request.args.get('username')
+
+    if (not code) or (not username):
+        return jsonify({'error': 'club code and username required'}), 400
+
+    club = Club.query.filter_by(code=code).first()
+    if not club:
+        return jsonify({'error': 'Club not found'}), 404
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    fav = Favorite(club_id=club.id, user_id=user.id)
+    db.session.add(fav)
+    db.session.commit()
+
+    return jsonify(club.to_dict())
+
+
+
+@app.route('/api/clubs/<code>', methods=['PATCH'])
+def api_club_update(code):
+    '''
+    updates a club if user is admin.
+    updateable fields: name, description, tags
+    '''
+    username = request.args.get('username')
+    if not username:
+        return jsonify({'error': 'admin username required'}), 401
+
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.admin:
+        return jsonify({'error': 'admin privileges required'}), 403
+
+    club = Club.query.filter_by(code=code).first()
+    if not club:
+        return jsonify({'error': 'Club not found'}), 404
+
+    name = request.args.get('name')
+    description = request.args.get('description')
+    tags = request.args.getlist('tag')
+
+    data = {}
+
+    if name:
+        data['name'] = name.strip()
+    if description:
+        data['description'] = description.strip()
+    if tags:
+        data['tags'] = [t.strip().title() for t in tags]
+
+
+    try:
+        club.update_from_dict(data)
+        db.session.add(club)
+        db.session.commit()
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+
+    return jsonify(club.to_dict())
+
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ class Club(db.Model):
 	name = db.Column(db.String, nullable=False)
 	description = db.Column(db.String)
 	tags = relationship('Tag', secondary=club_tags, back_populates='clubs')
+	favorites = relationship('Favorite', back_populates='club', cascade='all, delete-orphan')
 
 	def to_dict(self):
 		'''
@@ -28,6 +29,7 @@ class Club(db.Model):
 			'name': self.name,
 			'description': self.description,
 			'tags': [t.name for t in self.tags],
+			'favorite_count': len(self.favorites) if hasattr(self, 'favorites') else 0,
 		}
 
 	@staticmethod
@@ -43,6 +45,37 @@ class Club(db.Model):
 			tag = Tag.get_or_create(tag_name)
 			club.tags.append(tag)
 		return club
+
+	def update_from_dict(self, data):
+		'''
+		update from a dict. 
+		immutable fields: id, code
+		'''
+		if 'code' in data and data['code'] and data['code'].strip().lower() != self.code:
+			raise ValueError('club code cannot be changed')
+
+		if 'name' in data:
+			self.name = data.get('name') or self.name
+
+		if 'description' in data:
+			self.description = data.get('description')
+
+		if 'tags' in data:
+			# normalize tags and attach Tag objects
+			tag_names = [t.strip().title() for t in (data.get('tags') or []) if t and t.strip()]
+			self.tags = [Tag.get_or_create(tn) for tn in tag_names]
+
+		return self
+
+
+class Favorite(db.Model):
+	__tablename__ = 'favorite'
+
+	id = db.Column(db.Integer, primary_key=True)
+	club_id = db.Column(db.Integer, db.ForeignKey('club.id'), nullable=False)
+	user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+	club = relationship('Club', back_populates='favorites')
+	user = relationship('User')
 
 
 class Tag(db.Model):

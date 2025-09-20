@@ -68,5 +68,5 @@ if __name__ == '__main__':
 
     with app.app_context():
         db.create_all()
-        create_user('josh', 'Josh', 'josh@seas.upenn.edu', False)
+        create_user('josh', 'Josh', 'josh@seas.upenn.edu', True)
         load_data()

@@ -1,5 +1,6 @@
 from models import *
 
+
 def create_user(username: str, display_name: str, email: str, admin: bool):
     exists = User.query.filter_by(username=username).first()
     if exists:
@@ -25,20 +26,3 @@ def create_club(data):
     db.session.add(new_club)
     db.session.commit()
     print(f'Created club {data['code']}.')
-'''
-
-def create_club(code: str, name: str, description: str, tags: list):
-    exists = Club.query.filter_by(code=code).first()
-    if exists:
-        print('Club already exists.')
-        return
-
-    new_club = Club(code=code,
-                    name=name,
-                    description=description,
-                    tags=tags)
-    db.session.add(new_club)
-    db.session.commit()
-    print(f'Created club {name}.')
-
-'''
