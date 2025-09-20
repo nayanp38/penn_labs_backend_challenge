@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from db_create import db
-from services import *
+from utilities import *
 
 DB_FILE = "clubreview.db"
 
@@ -41,6 +41,7 @@ def api_user_profile():
     if not user:
         return jsonify({'error': 'User not found'}), 404
     
+    # exclude email and id for privacy reasons
     profile = {
         "username": user.username,
         "display_name": user.display_name,
@@ -58,6 +59,7 @@ def api_club_search():
     if not string:
         return jsonify({'error': 'No search parameter inputted'}), 400
     
+    #ilike is case-insensitive
     clubs = Club.query.filter(Club.name.ilike(f'%{string}%')).all()
     return jsonify([c.to_dict() for c in clubs])
 
@@ -75,7 +77,8 @@ def api_club_create():
 
     if (not code) or (not name): 
         return jsonify({'error': 'code and name fields required'}), 400
-
+    
+    #format data as JSON for create_club function
     data = {
         'code': code.strip().lower(),
         'name': name.strip(),
@@ -139,7 +142,7 @@ def api_club_update(code):
     tags = request.args.getlist('tag')
 
     data = {}
-
+    # make sure data isn't overwritten if not provided
     if name:
         data['name'] = name.strip()
     if description:

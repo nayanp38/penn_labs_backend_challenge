@@ -31,7 +31,7 @@ Relevant Files:
 
 2. db_create.py - creates SQLAlchemy database in a separate file to prevent circular imports where multiple instances of the database is created.
 
-3. services.py - contains services for other files to import (for organizational purposes).
+3. utilities.py - contains utilities for other files to import (for organizational purposes).
    - Functions:
       - create_user -> creates a User object based on inputted attributes. 
       - create_club -> creates a Club attribute based on inputted attributes. 
@@ -52,13 +52,13 @@ Models:
       - tags -> one-word club tags, in list format.
    - Methods:
       - to_dict -> convert a Club object to a JSON dict.
-      - from_dict (static) -> convert a JSON dict to a Club object.
+      - from_dict (static) -> convert a JSON dict to a Club object. Static because the Club instance doesn't exist yet. 
 2. Tag - a particular club tag, connected to a Club model 
    - Attributes:
       - name -> tag name.
       - clubs -> the clubs that contain that tag.
    - Methods:
-      - get_or_create (static) -> retrieve a tag or create a new one if that tag doesn't exist.
+      - get_or_create (static) -> retrieve a tag or create a new one if that tag doesn't exist. Static because it doesn't rely on a tag instance to operate (simply a utility function).
 3. User - a user of Penn Club Review
    - Attributes:
       - username -> unique username to distinguish between users.
@@ -68,4 +68,26 @@ Models:
       - created -> the date/time the account was created. Useful for account verificaiton. 
    - Methods:
       - to_dict -> convert a JSON dict to a User object.
-      - from_dict (static) -> convert a User object to a JSON dict.
+      - from_dict (static) -> convert a User object to a JSON dict. Static because the User instance doesn't exist yet. 
+
+
+## Noteable Design Choices
+
+- Centralized SQLAlchemy instance (single 'db' in 'db_create.py')
+   - Why: prevents circular-import problems and accidental creation of multiple 'SQLAlchemy()' instances that triggered many errors for me early on. 
+
+- Models as explicit relationships
+   - 'Favorite' is a separate model with keys to 'Club' and 'User' rather than storing a single list on 'Club'.
+   - Why: this makes queries more flexible and lets me add metadata (timestamp, source).
+
+- Tag handling
+   - Tags are normalized (title-cased) and stored in a separate 'Tag' model with a association table 'club_tags'.
+   - Why: this avoids tag duplication and makes it easy to list tags and the number of clubs per tag.
+
+- Some fields are not exposed
+   - 'GET /api/users' intentionally avoids returning the user's email and internal id for privacy reasons. Exposing emails or internal ids increases risk of data being harvested or abused.
+
+
+## Where to improve / next steps
+
+- Add logins, comments, and caching (as mentioned in WRITEUP.md).

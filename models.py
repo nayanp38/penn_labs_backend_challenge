@@ -1,7 +1,7 @@
 from db_create import db
 from sqlalchemy.orm import relationship
 
-# Association table for many-to-many relationship between clubs and tags
+# association table for relationship between clubs and tags
 club_tags = db.Table(
 	'club_tags',
 	db.Column('club_id', db.Integer, db.ForeignKey('club.id'), primary_key=True),
@@ -39,7 +39,8 @@ class Club(db.Model):
 		'''
 		tags = data.get('tags', []) or []
 		club = Club(code=data['code'], name=data.get('name', ''), description=data.get('description'))
-		# Attach Tag objects (caller should add to session and commit)
+		
+		# attach tags
 		club.tags = []
 		for tag_name in tags:
 			tag = Tag.get_or_create(tag_name)
@@ -87,6 +88,9 @@ class Tag(db.Model):
 	clubs = relationship('Club', secondary=club_tags, back_populates='tags')
 
 	def to_dict(self):
+		'''
+		create JSON dict from tag
+		'''
 		return {
 			'name': self.name,
 			'club_count': len(self.clubs) if hasattr(self, 'clubs') else 0,
@@ -117,6 +121,9 @@ class User(db.Model):
 	created = db.Column(db.DateTime, server_default=db.func.now())
 
 	def to_dict(self):
+		'''
+		create JSON dict from user
+		'''
 		return {
 			'id': self.id,
 			'username': self.username,
@@ -128,6 +135,9 @@ class User(db.Model):
 
 	@staticmethod
 	def from_dict(data):
+		'''
+		create User object from dict
+		'''
 		return User(
 			username=data.get('username'),
 			email=data.get('email'),

@@ -5,7 +5,7 @@ from db_create import db
 from models import *
 import json
 from pathlib import Path
-from services import *
+from utilities import *
 
 
 def load_data():
